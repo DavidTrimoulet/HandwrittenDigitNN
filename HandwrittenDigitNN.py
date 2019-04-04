@@ -1,4 +1,5 @@
 from tools import Tools
+from NN import NeuralNetwork as NN
 
 if __name__ == '__main__':
     m, width, height, training_set = Tools.load_image("Data\\train-images.idx3-ubyte")
@@ -9,3 +10,6 @@ if __name__ == '__main__':
     Tools.display_first_hundred_images(training_set)
     print(training_label)
     print("test")
+
+    my_network = NN.NeuralNetworkTemplate(1000, 10)
+
