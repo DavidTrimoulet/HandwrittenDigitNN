@@ -41,6 +41,15 @@ def load_image(path):
         print(data.shape)
     return m, width, height, data
 
+def convert_from_vector_to_array(training_vector, vectorOutputNumber):
+    data = np.zeros( (vectorOutputNumber, training_vector.shape[1]) )
+    for i in range(0, training_vector.shape[1]):
+        #print(data[training_vector[0][i]])
+        #print([i])
+        data[training_vector[0][i]][i] = 1
+
+    return data
+
 def display_first_hundred_images(data):
     image = np.zeros((28,28))
 

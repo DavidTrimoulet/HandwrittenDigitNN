@@ -25,8 +25,9 @@ class TestNeuralNetworkTemplate(TestCase):
     def test_forwardProp(self):
         parameters = self.nn.initActivations(self.H, self.nn.initHiddenLayer(self.H, 25, 6))
         X = tf.placeholder(tf.float32, shape=[ 25 , None], name="X")
-        Z = self.nn.forwardPropagation(X, parameters)
-        self.assertEqual(Z.shape , [4, None] )
+        Z = self.nn.forward_propagation(X, parameters)
+        test = tf.placeholder(tf.float32, shape=[6, None], name="test")
+        self.assertEqual(Z.shape , test.shape )
 
     def test_Cost(self):
         parameters = self.nn.initActivations(self.H, self.nn.initHiddenLayer(self.H, 25, 6))
