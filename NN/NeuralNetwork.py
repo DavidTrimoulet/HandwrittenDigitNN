@@ -58,7 +58,7 @@ class NeuralNetworkTemplate():
     def initialize_parameters(self, H, n_x, n_y ):
         return self.initActivations( H , self.initHiddenLayer(H, n_x, n_y) )
 
-    def model(self, X_train, Y_train, X_test, Y_test, learning_rate = 0.0001, num_epochs = 1500, print_cost = True, H=[(4,"sigmoid"),(4,"sigmoid"),(10,"sigmoid")]):
+    def model(self, X_train, Y_train, X_test, Y_test, starter_learning_rate = 0.1, gradient="gradient_descent", num_epochs = 1500, print_cost = True, H=[(4,"sigmoid"),(4,"sigmoid"),(10,"sigmoid")]):
 
         ops.reset_default_graph()
         (n_x, m) = X_train.shape
@@ -70,7 +70,12 @@ class NeuralNetworkTemplate():
 
         cost = self.compute_cost(Z, Y)
         print(cost)
-        optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate).minimize(cost)
+        if gradient == "adam":
+            optimizer = tf.train.AdamOptimizer(learning_rate=starter_learning_rate).minimize(cost)
+        else :
+            global_step = tf.Variable(0, trainable=False)
+            learning_rate = tf.train.exponential_decay(starter_learning_rate, global_step, 10000, 0.96, staircase=True)
+            optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate).minimize(cost)
         print(optimizer)
         init = tf.global_variables_initializer()
 
@@ -91,7 +96,7 @@ class NeuralNetworkTemplate():
             plt.plot(np.squeeze(costs))
             plt.ylabel('cost')
             plt.xlabel('iterations (per tens)')
-            plt.title("Learning rate =" + str(learning_rate))
+            plt.title("Learning rate =" + str(starter_learning_rate))
             plt.show()
 
             # lets save the parameters in a variable
