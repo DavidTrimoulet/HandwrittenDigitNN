@@ -13,10 +13,10 @@ if __name__ == '__main__':
     test_label = Tools.convert_from_vector_to_array(test_label, 10)
 
     #print(test_label.shape)
-    #Tools.display_first_hundred_images(training_set)
+    Tools.display_n_images(training_set, 10)
     #print(training_label)
 
-    my_network = NN.NeuralNetworkTemplate()
+    my_network = NN.NeuralNetwork()
     #Train 0.93 test 0.93 my_network.model( training_set, training_label, test_set, test_label, learning_rate = 0.1, num_epochs = 500, H=[(50,"relu"),(25,"relu"),(12,"relu")])
     #bad my_network.model(training_set, training_label, test_set, test_label, learning_rate=0.01, num_epochs=2000, H=[(50, "relu"), (25, "relu"), (12, "relu")])
     #bad my_network.model(training_set, training_label, test_set, test_label, learning_rate=0.01, num_epochs=2000, H=[(50, "sigmoid"), (25, "sigmoid"), (12, "sigmoid")])
@@ -38,4 +38,26 @@ if __name__ == '__main__':
     # Train 1.0 test 0.9741 my_network.model(training_set, training_label, test_set, test_label, gradient="adam", starter_learning_rate=0.01, num_epochs=500, H=[(150, "relu"), (50, "relu"), (50, "relu")])
     # Train 1.0 test 0.9725 my_network.model(training_set, training_label, test_set, test_label, gradient="adam", starter_learning_rate=0.01, num_epochs=500, H=[(150, "relu"), (50, "relu")])
     # Train 1.0 test 0.9664 my_network.model(training_set, training_label, test_set, test_label, gradient="adam", starter_learning_rate=0.01, num_epochs=500, H=[(50, "relu"), (50, "relu") , (50, "relu")])
-    my_network.model(training_set, training_label, test_set, test_label, gradient="adam", starter_learning_rate=0.01, num_epochs=500, H=[(150, "relu"), (50, "relu"), (50, "relu")])
+    # Train 1.0 test 0.9664 my_network.model(training_set, training_label, test_set, test_label, gradient="adam", starter_learning_rate=0.01, num_epochs=500, H=[(150, "relu"), (150, "relu"), (50, "relu")])
+    #adding dropout
+    #Train 0.9980 test 0.9749 my_network.model(training_set, training_label, test_set, test_label, gradient="adam", starter_learning_rate=0.01, num_epochs=500, H=[(150, "relu"), (50, "relu"), (50, "relu")])
+    #Train 0.99825 test 0.9753 my_network.model(training_set, training_label, test_set, test_label, gradient="adam", starter_learning_rate=0.01, num_epochs=500, H=[(150, "relu"), (50, "relu"), (50, "relu") , (50, "relu")])
+    #Train 0.9985833 test 0.9727 my_network.model(training_set, training_label, test_set, test_label, gradient="adam", starter_learning_rate=0.01, num_epochs=500, H=[(150, "relu"), (50, "relu"), (50, "relu"), (50, "relu"), (50, "relu"), (50, "relu")])
+    #Train 0.9981667 test 0.9731 my_network.model(training_set, training_label, test_set, test_label, gradient="adam", starter_learning_rate=0.01, num_epochs=500, H=[(150, "relu"), (150, "relu"), (150, "relu"), (150, "relu")])
+    #Train 0.99481666 test 0.9676 my_network.model(training_set, training_label, test_set, test_label, gradient="adam", starter_learning_rate=0.01, num_epochs=500, H=[(370, "relu"), (150, "relu"), (50, "relu"), (25, "relu"), (12, "relu")])
+    #Train 0.995633 test 0.9663 my_network.model(training_set, training_label, test_set, test_label, gradient="adam", starter_learning_rate=0.01, dropout_rate=0.2,num_epochs=500, H=[(150, "relu"), (50, "relu"), (50, "relu"), (50, "relu")])
+    #Train 0.9988 test 0.9752
+    parameters, activations = my_network.model(training_set, training_label, test_set, test_label, gradient="adam", starter_learning_rate=0.01, num_epochs=500, H=[(150, "relu"), (150, "relu"), (50, "relu")])
+
+    while True :
+        print("get a picture number between 0 and ", test_set.shape[1], ":" )
+        try:
+            image_number = int(input('Image:'))
+        except ValueError:
+            print ("Not a number")
+        print(test_set)
+        Tools.displayImage( test_set[:, image_number] )
+        predicted_number = my_network.predict( parameters, activations ,  test_set[ :, image_number ].reshape(784,1) )
+
+        print("it's a ", predicted_number, "should be a " , test_label[image_number] )
+

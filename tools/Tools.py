@@ -8,9 +8,11 @@ def load_label(path):
         magic_number = f.read(4)
         print(int.from_bytes( magic_number , byteorder='big' ))
         items = int.from_bytes( f.read(4) , byteorder='big' )
+        #items =10
         data.resize((1, items))
         accu = 0
         byte = f.read(1)
+        #for i in range(0,10):
         while byte != b"":
             data[0,accu] = int.from_bytes( byte , byteorder='big' )
             # Do stuff with byte.
@@ -25,6 +27,7 @@ def load_image(path):
         magic_number = f.read(4)
         print(int.from_bytes( magic_number , byteorder='big' ))
         m = int.from_bytes(f.read(4), byteorder='big')
+        #m = 10
         print(m)
         width = int.from_bytes( f.read(4), byteorder='big' )
         height = int.from_bytes( f.read(4) , byteorder='big' )
@@ -33,6 +36,7 @@ def load_image(path):
         byte = f.read(1)
         accu = 0
         while byte != b"":
+        #for i in range(0 , 10 * width * height) :
             data[accu] = int.from_bytes( byte , byteorder='big' )
             accu+=1
             # Do stuff with byte.
@@ -50,10 +54,13 @@ def convert_from_vector_to_array(training_vector, vectorOutputNumber):
 
     return data
 
-def display_first_hundred_images(data):
+def display_n_images(data, n):
     image = np.zeros((28,28))
+    for k in range(0,n):
+        displayImage(data[:, k])
 
-    for k in range(0,10):
-        image = data[:, k].reshape((28,28))
-        plt.imshow(image)
-        plt.show()
+def displayImage(image_raw) :
+    image = np.zeros((28, 28))
+    image = image_raw.reshape((28, 28))
+    plt.imshow(image)
+    plt.show()

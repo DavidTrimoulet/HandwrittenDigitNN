@@ -3,7 +3,7 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 from tensorflow.python.framework import ops
 
-class NeuralNetworkTemplate():
+class NeuralNetwork():
 
     def generate_placehorlders(self, n_x, n_y):
         X = tf.placeholder(tf.float32, shape= [n_x, None], name="X")
@@ -13,40 +13,44 @@ class NeuralNetworkTemplate():
     def cost(self, logits, labels):
         z = tf.placeholder(tf.float32, name="z")
         y = tf.placeholder(tf.float32, name="y")
-        cost = cost = tf.nn.sigmoid_cross_entropy_with_logits(logits=z,  labels=y)
+        cost = tf.nn.sigmoid_cross_entropy_with_logits(logits=z,  labels=y)
         sess = tf.Session()
         cost = sess.run(cost, feed_dict={z: logits, y: labels})
         sess.close()
 
         return cost
 
+    def initialize_parameters(self, H, n_x, n_y ):
+        return self.initHiddenLayer(H, n_x, n_y) , self.initActivations( H )
+
     def initHiddenLayer(self, H, n_x, n_y):
-        parameters = {"layerParameters" : {},
-                      "activations" : []}
+        parameters = {}
         with tf.variable_scope("NeuralNetwork", reuse=tf.AUTO_REUSE):
-            parameters["layerParameters"]["W1"] = tf.get_variable("W1", [H[0][0], n_x], initializer=tf.contrib.layers.xavier_initializer(seed=1))
-            parameters["layerParameters"]["b1"] = tf.get_variable("b1", [H[0][0], 1], initializer = tf.zeros_initializer())
+            parameters["W1"] = tf.get_variable("W1", [H[0][0], n_x], initializer=tf.contrib.layers.xavier_initializer(seed=1))
+            parameters["b1"] = tf.get_variable("b1", [H[0][0], 1], initializer = tf.zeros_initializer())
 
             for i in range(1, len(H)):
-                parameters["layerParameters"]["W" + str(i+1)] = tf.get_variable("W" + str(i+1), [H[i][0] , H[i-1][0] ], initializer = tf.contrib.layers.xavier_initializer(seed = 1))
-                parameters["layerParameters"]["b" + str(i+1)] = tf.get_variable("b" + str(i+1), [H[i][0],1], initializer = tf.zeros_initializer())
+                parameters["W" + str(i+1)] = tf.get_variable("W" + str(i+1), [H[i][0] , H[i-1][0] ], initializer = tf.contrib.layers.xavier_initializer(seed = 1))
+                parameters["b" + str(i+1)] = tf.get_variable("b" + str(i+1), [H[i][0],1], initializer = tf.zeros_initializer())
 
-            parameters["layerParameters"]["W" + str(len(H)+1)] = tf.get_variable("W" + str(len(H)+1), [ n_y , H[len(H)-1 ][0] ],initializer=tf.contrib.layers.xavier_initializer(seed=1))
-            parameters["layerParameters"]["b" + str(len(H)+1)] = tf.get_variable("b" + str(len(H)+1), [n_y, 1], initializer=tf.zeros_initializer())
+            parameters["W" + str(len(H)+1)] = tf.get_variable("W" + str(len(H)+1), [ n_y , H[len(H)-1 ][0] ],initializer=tf.contrib.layers.xavier_initializer(seed=1))
+            parameters["b" + str(len(H)+1)] = tf.get_variable("b" + str(len(H)+1), [n_y, 1], initializer=tf.zeros_initializer())
         return parameters
 
-    def initActivations(self, H, parameters):
-        for l in H :
-            parameters["activations"].append(l[1])
+    def initActivations(self, H ):
+        activations = []
+        for layer in H :
+            activations.append(layer[1])
 
-        return parameters
+        return activations
 
-    def forward_propagation(self, X , parameters):
-        Z = tf.add(tf.matmul(parameters["layerParameters"]["W1"], X ), parameters["layerParameters"]["b1"])
-        for i in range(1, len(parameters["activations"]) + 1 ):
-            print("i:", i-1, ", activations:", parameters["activations"][i-1])
-            A = tf.nn.relu(Z) if parameters["activations"][i-1] == "relu" else tf.nn.sigmoid(Z)
-            Z = tf.add(tf.matmul(parameters["layerParameters"]["W" + str(i+1)] ,A), parameters["layerParameters"]["b" + str(i+1)] )
+    def forward_propagation(self, X , parameters, activations, rate=0.0):
+        Z = tf.add(tf.matmul(parameters["W1"], X ), parameters["b1"])
+        for i in range(1, len(activations) + 1 ):
+            print("i:", i-1, ", activations:", activations[i-1])
+            A = tf.nn.relu(Z) if activations[i-1] == "relu" else tf.nn.sigmoid(Z)
+            A = tf.nn.dropout(A , rate=rate)
+            Z = tf.add(tf.matmul(parameters["W" + str(i+1)] ,A), parameters["b" + str(i+1)] )
         return Z
 
     def compute_cost(self, Z, Y):
@@ -55,18 +59,15 @@ class NeuralNetworkTemplate():
         cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=labels))
         return cost
 
-    def initialize_parameters(self, H, n_x, n_y ):
-        return self.initActivations( H , self.initHiddenLayer(H, n_x, n_y) )
-
-    def model(self, X_train, Y_train, X_test, Y_test, starter_learning_rate = 0.1, gradient="gradient_descent", num_epochs = 1500, print_cost = True, H=[(4,"sigmoid"),(4,"sigmoid"),(10,"sigmoid")]):
+    def model(self, X_train, Y_train, X_test, Y_test, dropout_rate=0.1, starter_learning_rate = 0.1, gradient="gradient_descent", num_epochs = 1500, print_cost = True, H=[(4,"sigmoid"),(4,"sigmoid"),(10,"sigmoid")]):
 
         ops.reset_default_graph()
         (n_x, m) = X_train.shape
         n_y = Y_train.shape[0]
         costs = []
         X, Y = self.generate_placehorlders(n_x, n_y)
-        parameters = self.initialize_parameters(H, n_x, n_y)
-        Z = self.forward_propagation(X, parameters)
+        parameters, activations = self.initialize_parameters(H, n_x, n_y)
+        Z = self.forward_propagation(X, parameters, activations, dropout_rate)
 
         cost = self.compute_cost(Z, Y)
         print(cost)
@@ -100,8 +101,8 @@ class NeuralNetworkTemplate():
             plt.show()
 
             # lets save the parameters in a variable
-            parameters = sess.run(parameters["layerParameters"])
-            #print(sess.run(parameters["layerParameters"]))
+            parameters = sess.run( parameters )
+            #print(sess.run(parameters))
             print("Parameters have been trained!")
 
             # Calculate the correct predictions
@@ -115,4 +116,20 @@ class NeuralNetworkTemplate():
             print("Train Accuracy:", accuracy.eval({X: X_train, Y: Y_train}))
             print("Test Accuracy:", accuracy.eval({X: X_test, Y: Y_test}))
             self.parameters = parameters
-            return parameters
+            return parameters , activations
+
+    def predict(self, parameters, activations , X ):
+        params = {}
+
+        for key in parameters:
+            params[str(key)] = tf.convert_to_tensor( parameters[str(key)] )
+        print("x shape:", X.shape)
+        x = tf.placeholder("float", [X.shape[0], 1])
+
+        z3 = self.forward_propagation(x, params, activations)
+
+        p = tf.argmax(z3)
+
+        sess = tf.Session()
+        prediction = sess.run(p, feed_dict={x: X})
+        return prediction
