@@ -56,31 +56,42 @@ def load_hand_shown_image(path, test):
     width = 0
     height = 0
     folders = os.listdir(path)
-    training_set = []
+    print(folders)
     for folder in folders :
     #folder ="9"
-        files = folders = os.listdir(path + "/" + folder)
+        files = os.listdir(path + "/" + folder)
+        print("folder:", folder)
         for file in files:
+            filename = path + "/" + folder + "/" + file
             training_label.append(int(folder))
-            image = Image.open(path + "/" + folder + "/" +file)
-            width, height = image.size
-            pixels = image.load()
-            r = []
-            g = []
-            b = []
-            for i in range(0, width):
-                for j in range(0, height):
-                    pixel = pixels[i , j]
-                    r.append(pixel[0])
-                    g.append(pixel[1])
-                    b.append(pixel[2])
-            image_vectorized = r + g + b
+            height, width , image_vectorized = get_image(filename)
             training_set = training_set + image_vectorized
             m += 1
-    training_set = np.array(training_set).reshape(( m , width * height * 3)).T
+        #print(m)
+    training_set = np.asarray(training_set).reshape(( m , width * height * 3)).T
     print(training_set.shape)
 
     return m, width, height, training_set, training_label
+
+
+def get_image(filename):
+    image = Image.open(filename)
+    width, height = image.size
+    # if width != 100 :
+    #    print("file:", file, width, height)
+    pixels = image.load()
+    r = []
+    g = []
+    b = []
+    for i in range(0, width):
+        for j in range(0, height):
+            pixel = pixels[i, j]
+            r.append(pixel[0])
+            g.append(pixel[1])
+            b.append(pixel[2])
+    image_vectorized = r + g + b
+    return height, width, image_vectorized
+
 
 def convert_from_vector_to_array(training_vector, vectorOutputNumber):
     data = np.zeros( (vectorOutputNumber, training_vector.shape[1]) )
