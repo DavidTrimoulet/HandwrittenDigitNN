@@ -3,6 +3,7 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 from tensorflow.python.framework import ops
 
+
 class NeuralNetwork():
 
     def generate_placehorlders(self, n_x, n_y):

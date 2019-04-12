@@ -4,6 +4,7 @@ import tensorflow as tf
 from tools import Tools
 from pathlib import Path
 
+
 class TestNeuralNetworkTemplate(TestCase):
 
     def setUp(self):

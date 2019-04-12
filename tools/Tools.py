@@ -58,18 +58,19 @@ def load_hand_shown_image(path, test):
     width = 0
     height = 0
     folders = Path(path)
-    #folders = os.listdir(path)
-    print(folders)
     for folder in folders.iterdir() :
-    #folder ="9"
+#       folder ="9"
         print("folder:", folder.name)
         for file in folder.iterdir():
             training_label.append(int(folder.name))
             height, width , image_vectorized = get_image(file)
             training_set = training_set + image_vectorized
             m += 1
-        #print(m)
+ #      print(m)
+        if test :
+            break
     training_set = np.asarray(training_set).reshape(( m , width * height * 3)).T
+    training_label = np.asarray(training_label).reshape(1,m)
     print(training_set.shape)
 
     return m, width, height, training_set, training_label
@@ -104,13 +105,16 @@ def convert_from_vector_to_array(training_vector, vectorOutputNumber):
     return data
 
 
-def display_n_images(data, n, image_size):
-    image = np.zeros((image_size,image_size))
-    for k in range(0,n):
-        displayImage(data[:, k], image_size)
+def display_n_images(data, n, image_size, mode="grey"):
+    image = np.zeros((image_size, image_size))
+    for k in range(0, n):
+        display_image(data[:, k], image_size, mode)
 
 
-def displayImage(image_raw, image_size) :
-    image = image_raw.reshape((image_size, image_size))
+def display_image(image_raw, image_size, mode="grey"):
+    if mode == "RGB":
+        image = image_raw.reshape(image_size, image_size, 3)
+    else:
+        image = image_raw.reshape((image_size, image_size))
     plt.imshow(image)
     plt.show()
