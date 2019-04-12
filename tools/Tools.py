@@ -2,18 +2,20 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 
-def load_label(path):
+def load_label(path, test=False):
     data = np.array(0)
     with open(path , "rb") as f:
         magic_number = f.read(4)
         print(int.from_bytes( magic_number , byteorder='big' ))
-        items = int.from_bytes( f.read(4) , byteorder='big' )
-        #items =10
+        if not test:
+            items = int.from_bytes(f.read(4), byteorder='big')
+        else :
+            items = 10
+            f.read(4)
         data.resize((1, items))
         accu = 0
         byte = f.read(1)
-        #for i in range(0,10):
-        while byte != b"":
+        for i in range(0,items):
             data[0,accu] = int.from_bytes( byte , byteorder='big' )
             # Do stuff with byte.
             byte = f.read(1)
@@ -21,13 +23,16 @@ def load_label(path):
     return data
 
 
-def load_image(path):
+def load_image(path, test=False):
     data = np.array(0)
     with open(path , "rb") as f:
         magic_number = f.read(4)
         print(int.from_bytes( magic_number , byteorder='big' ))
-        m = int.from_bytes(f.read(4), byteorder='big')
-        #m = 10
+        if not test:
+            m = int.from_bytes(f.read(4), byteorder='big')
+        else :
+            m = 10
+            f.read(4)
         print(m)
         width = int.from_bytes( f.read(4), byteorder='big' )
         height = int.from_bytes( f.read(4) , byteorder='big' )
@@ -35,8 +40,7 @@ def load_image(path):
         data.resize( (width * height * m, 1 ) )
         byte = f.read(1)
         accu = 0
-        while byte != b"":
-        #for i in range(0 , 10 * width * height) :
+        for i in range(0 , m * width * height) :
             data[accu] = int.from_bytes( byte , byteorder='big' )
             accu+=1
             # Do stuff with byte.
