@@ -42,3 +42,6 @@ class TestNeuralNetworkTemplate(TestCase):
         self.assertEqual(len(image_vectorized), 30000)
         self.assertEqual(height, 100)
         self.assertEqual(width, 100)
+
+    def test_load_hand_shown_images(self):
+        Tools.load_hand_shown_image("../Data/Sign-Language-image/Dataset/", True)

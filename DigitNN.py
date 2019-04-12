@@ -2,7 +2,7 @@ from tools import Tools
 from NN import NeuralNetwork as NN
 
 def hand_written_digit():
-    test = False
+    test = True
 
     m, width, height, training_set = Tools.load_hand_written_image("Data/train-images.idx3-ubyte", test)
     training_label = Tools.load_hand_written_label("Data/train-labels.idx1-ubyte", test)
