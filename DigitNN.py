@@ -1,17 +1,22 @@
 from tools import Tools
 from NN import NeuralNetwork as NN
+from pathlib import Path
 
 def hand_written_digit():
     test = True
-
-    m, width, height, training_set = Tools.load_hand_written_image("Data/train-images.idx3-ubyte", test)
-    training_label = Tools.load_hand_written_label("Data/train-labels.idx1-ubyte", test)
+    p = Path('.')
+    datasetPath = p / "Data" / "train-images.idx3-ubyte"
+    m, width, height, training_set = Tools.load_hand_written_image(datasetPath, test)
+    datasetLabelPath = p / "Data" / "train-labels.idx1-ubyte"
+    training_label = Tools.load_hand_written_label(datasetLabelPath, test)
     training_set = training_set / 255
     print(training_label)
     training_label = Tools.convert_from_vector_to_array(training_label, 10)
-    m_test, width_test, height_test, test_set = Tools.load_hand_written_image("Data/t10k-images.idx3-ubyte", test)
+    testsetPath = p / "Data" / "t10k-images.idx3-ubyte"
+    m_test, width_test, height_test, test_set = Tools.load_hand_written_image(testsetPath, test)
     test_set = test_set / 255
-    test_label = Tools.load_hand_written_label("Data/t10k-labels.idx1-ubyte", test)
+    testsetLabelPath = p / "Data" / "t10k-labels.idx1-ubyte"
+    test_label = Tools.load_hand_written_label(testsetLabelPath, test)
     test_label_array = Tools.convert_from_vector_to_array(test_label, 10)
 
     # print(test_label.shape)
@@ -56,8 +61,9 @@ def hand_written_digit():
 
 def hand_shown_digit():
     test = True
-
-    m, width, height, training_set, training_label = Tools.load_hand_shown_image("Data/Sign-Language-image/Dataset", test)
+    p = Path('.')
+    datasetPath = p / "Data" / "Sign-Language-image" / "Dataset"
+    m, width, height, training_set, training_label = Tools.load_hand_shown_image(datasetPath, test)
 
     return my_network, test_set, test_label, parameters, activations, width
 
