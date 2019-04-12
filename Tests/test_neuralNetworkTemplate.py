@@ -1,12 +1,13 @@
 from unittest import TestCase
 from NN import NeuralNetwork
 import tensorflow as tf
+from tools import Tools
 
 class TestNeuralNetworkTemplate(TestCase):
 
     def setUp(self):
         self.H = [(6, "sigmoid"), (4, "relu")]
-        self.nn = NeuralNetwork.NeuralNetworkTemplate()
+        self.nn = NeuralNetwork.NeuralNetwork()
 
     def test_initHiddenLayer(self):
         parameters = self.nn.initHiddenLayer(self.H, 25, 6)
@@ -35,3 +36,6 @@ class TestNeuralNetworkTemplate(TestCase):
         Y = tf.placeholder(tf.float32, shape=[ 25 , None], name="X")
         cost = self.nn.compute_cost(self.nn.forwardPropagation(X, parameters), Y)
         print(cost)
+
+    def test_load_hand_shown_image(self):
+        Tools.load_hand_shown_image("../Data/Sign-Language-image/Dataset", True)

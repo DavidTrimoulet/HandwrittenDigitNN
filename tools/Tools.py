@@ -1,8 +1,9 @@
 import numpy as np
 from matplotlib import pyplot as plt
+import os
+from PIL import Image
 
-
-def load_label(path, test=False):
+def load_hand_written_label(path, test=False):
     data = np.array(0)
     with open(path , "rb") as f:
         magic_number = f.read(4)
@@ -22,8 +23,7 @@ def load_label(path, test=False):
             accu+=1
     return data
 
-
-def load_image(path, test=False):
+def load_hand_written_image(path, test=False):
     data = np.array(0)
     with open(path , "rb") as f:
         magic_number = f.read(4)
@@ -49,6 +49,39 @@ def load_image(path, test=False):
         print(data.shape)
     return m, width, height, data
 
+def load_hand_shown_image(path, test):
+    training_set = []
+    training_label = []
+    m = 0
+    width = 0
+    height = 0
+    folders = os.listdir(path)
+    training_set = []
+    for folder in folders :
+    #folder ="9"
+        files = folders = os.listdir(path + "/" + folder)
+        for file in files:
+            training_label.append(int(folder))
+            image = Image.open(path + "/" + folder + "/" +file)
+            width, height = image.size
+            pixels = image.load()
+            r = []
+            g = []
+            b = []
+            for i in range(0, width):
+                for j in range(0, height):
+                    pixel = pixels[i , j]
+                    r.append(pixel[0])
+                    g.append(pixel[1])
+                    b.append(pixel[2])
+            image_vectorized = r + g + b
+            training_set = training_set + image_vectorized
+            m += 1
+    training_set = np.array(training_set).reshape(( m , width * height * 3)).T
+    print(training_set.shape)
+
+    return m, width, height, training_set, training_label
+
 def convert_from_vector_to_array(training_vector, vectorOutputNumber):
     data = np.zeros( (vectorOutputNumber, training_vector.shape[1]) )
     for i in range(0, training_vector.shape[1]):
@@ -58,13 +91,12 @@ def convert_from_vector_to_array(training_vector, vectorOutputNumber):
 
     return data
 
-def display_n_images(data, n):
-    image = np.zeros((28,28))
+def display_n_images(data, n, image_size):
+    image = np.zeros((image_size,image_size))
     for k in range(0,n):
-        displayImage(data[:, k])
+        displayImage(data[:, k], image_size)
 
-def displayImage(image_raw) :
-    image = np.zeros((28, 28))
-    image = image_raw.reshape((28, 28))
+def displayImage(image_raw, image_size) :
+    image = image_raw.reshape((image_size, image_size))
     plt.imshow(image)
     plt.show()
