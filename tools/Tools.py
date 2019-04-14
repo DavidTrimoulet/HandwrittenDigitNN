@@ -5,35 +5,35 @@ from PIL import Image
 
 def load_hand_written_label(path, test=False):
     data = np.array(0)
-    with open(path , "rb") as f:
+    with open(path, "rb") as f:
         m = load_hand_written_meta_data(f, test)
         data.resize((1, m))
         accu = 0
         byte = f.read(1)
-        for i in range(0,m):
-            data[0,accu] = int.from_bytes( byte , byteorder='big' )
+        for i in range(0, m):
+            data[0, accu] = int.from_bytes(byte, byteorder='big')
             # Do stuff with byte.
             byte = f.read(1)
-            accu+=1
+            accu += 1
     return data
 
 
 def load_hand_written_image(path, test=False):
     data = np.array(0)
-    with open(path , "rb") as f:
+    with open(path, "rb") as f:
         m = load_hand_written_meta_data(f, test)
-        width = int.from_bytes( f.read(4), byteorder='big' )
-        height = int.from_bytes( f.read(4) , byteorder='big' )
+        width = int.from_bytes(f.read(4), byteorder='big')
+        height = int.from_bytes(f.read(4), byteorder='big')
         print(width, height)
-        data.resize( (width * height * m, 1 ) )
+        data.resize((width * height * m, 1))
         byte = f.read(1)
         accu = 0
-        for i in range(0 , m * width * height) :
-            data[accu] = int.from_bytes( byte , byteorder='big' )
-            accu+=1
+        for i in range(0, m * width * height):
+            data[accu] = int.from_bytes(byte, byteorder='big')
+            accu += 1
             # Do stuff with byte.
             byte = f.read(1)
-        data = data.reshape(( m , width * height)).T
+        data = data.reshape((m, width * height)).T
         print(data.shape)
     return m, width, height, data
 
@@ -57,19 +57,19 @@ def load_hand_shown_image(path, test):
     width = 0
     height = 0
     folders = path
-    for folder in folders.iterdir() :
-#       folder ="9"
+    for folder in folders.iterdir():
+        # folder ="9"
         print("folder:", folder.name)
         for file in folder.iterdir():
             training_label.append(int(folder.name))
-            height, width , image_vectorized = get_image(file)
+            height, width, image_vectorized = get_image(file)
             training_set = training_set + image_vectorized
             m += 1
- #      print(m)
-        if test :
+        # print(m)
+        if test:
             break
-    training_set = np.asarray(training_set).reshape(( m , width * height * 3)).T
-    training_label = np.asarray(training_label).reshape(1,m)
+    training_set = np.asarray(training_set).reshape((m, width * height * 3)).T
+    training_label = np.asarray(training_label).reshape(1, m)
     print(training_set.shape)
 
     return m, width, height, training_set, training_label
@@ -95,10 +95,10 @@ def get_image(filename):
 
 
 def convert_from_vector_to_array(training_vector, vectorOutputNumber):
-    data = np.zeros( (vectorOutputNumber, training_vector.shape[1]) )
+    data = np.zeros( (vectorOutputNumber, training_vector.shape[1]))
     for i in range(0, training_vector.shape[1]):
-        #print(data[training_vector[0][i]])
-        #print([i])
+        # print(data[training_vector[0][i]])
+        # print([i])
         data[training_vector[0][i]][i] = 1
 
     return data

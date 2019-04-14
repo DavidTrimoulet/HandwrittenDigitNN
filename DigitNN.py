@@ -57,22 +57,23 @@ def hand_written_digit():
     # Train 0.995633 test 0.9663 my_network.model(training_set, training_label, test_set, test_label, gradient="adam", starter_learning_rate=0.01, dropout_rate=0.2,num_epochs=500, H=[(150, "relu"), (50, "relu"), (50, "relu"), (50, "relu")])
     # Train 0.9988 test 0.9752
     parameters, activations = my_network.model(training_set, training_label_array, test_set, test_label_array,
-                     gradient="adam", starter_learning_rate=0.01, num_epochs=500,
-                     H=[(150, "relu"), (150, "relu"), (50, "relu")])
+                                               gradient="adam", starter_learning_rate=0.01, num_epochs=500,
+                                               H=[(150, "relu"), (150, "relu"), (50, "relu")])
     return my_network, test_set, test_label, parameters, activations, width,
+
 
 def hand_shown_digit():
     test = False
     datasetPath = ROOT_PATH / "Data" / "Sign-Language-image" / "Dataset"
     m, width, height, training_set, training_label = Tools.load_hand_shown_image(datasetPath, test)
-    index = ((m // 4 ) * 3)
+    index = ((m // 4) * 3)
     print(int(index))
     print(training_label.shape)
     print(training_set.shape)
-    test_set = training_set[: , index:]
-    test_label = training_label[: , index:]
-    training_set = training_set[: , :index]
-    training_label = training_label[: , :index]
+    test_set = training_set[:, index:]
+    test_label = training_label[:, index:]
+    training_set = training_set[:, :index]
+    training_label = training_label[:, :index]
     training_label_array = Tools.convert_from_vector_to_array(training_label, 10)
     test_label_array = Tools.convert_from_vector_to_array(test_label, 10)
     Tools.display_n_images(training_set, 10, width, mode="RGB")
@@ -85,18 +86,16 @@ def hand_shown_digit():
     return my_network, test_set, test_label, parameters, activations, width, channel
 
 if __name__ == '__main__':
-
-    #my_network, test_set, test_label , parameters, activations, width , channel = hand_written_digit()
-    my_network, test_set, test_label , parameters, activations, width, channel = hand_shown_digit()
-    while True :
-        print("get a picture number between 0 and ", test_set.shape[1], ":" )
+    # my_network, test_set, test_label , parameters, activations, width , channel = hand_written_digit()
+    my_network, test_set, test_label, parameters, activations, width, channel = hand_shown_digit()
+    while True:
+        print("get a picture number between 0 and ", test_set.shape[1], ":")
         try:
             image_number = int(input('Image:'))
         except ValueError:
             print ("Not a number")
         print(test_set)
-        Tools.display_image( test_set[:, image_number] , width, mode="RGB" )
-        predicted_number = my_network.predict( parameters, activations ,  test_set[ :, image_number].reshape(width * width * channel, 1))
+        Tools.display_image(test_set[:, image_number], width, mode="RGB")
+        predicted_number = my_network.predict(parameters, activations, test_set[:, image_number].reshape(width * width * channel, 1))
         print(test_label)
-        print("it's a ", predicted_number, "should be a " , test_label[0][image_number] )
-
+        print("it's a ", predicted_number, "should be a ", test_label[0][image_number])
