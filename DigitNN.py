@@ -80,8 +80,13 @@ def hand_shown_digit():
     channel = 3
     my_network = NN.NeuralNetwork()
 
-    parameters, activations = my_network.model(training_set, training_label_array, test_set, test_label_array,
-                                               gradient="adam", starter_learning_rate=0.01, num_epochs=500,
+    parameters, activations = my_network.model(training_set,
+                                               training_label_array,
+                                               test_set,
+                                               test_label_array,
+                                               gradient="adam",
+                                               starter_learning_rate=0.01,
+                                               num_epochs=500,
                                                H=[(150, "relu"), (150, "relu"), (50, "relu")])
     return my_network, test_set, test_label, parameters, activations, width, channel
 

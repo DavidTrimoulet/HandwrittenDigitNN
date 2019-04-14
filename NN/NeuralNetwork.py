@@ -31,12 +31,19 @@ class NeuralNetwork():
             parameters["b1"] = tf.get_variable("b1", [H[0][0], 1], initializer=tf.zeros_initializer())
 
             for i in range(1, len(H)):
-                parameters["W" + str(i + 1)] = tf.get_variable("W" + str(i + 1), [H[i][0], H[i - 1][0]],
+                parameters["W" + str(i + 1)] = tf.get_variable("W" + str(i + 1),
+                                                               [H[i][0], H[i - 1][0]],
                                                                initializer=tf.contrib.layers.xavier_initializer(seed=1))
-                parameters["b" + str(i + 1)] = tf.get_variable("b" + str(i + 1), [H[i][0], 1], initializer=tf.zeros_initializer())
+                parameters["b" + str(i + 1)] = tf.get_variable("b" + str(i + 1),
+                                                               [H[i][0], 1],
+                                                               initializer=tf.zeros_initializer())
 
-            parameters["W" + str(len(H) + 1)] = tf.get_variable("W" + str(len(H) + 1), [n_y, H[len(H) - 1][0]], initializer=tf.contrib.layers.xavier_initializer(seed=1))
-            parameters["b" + str(len(H) + 1)] = tf.get_variable("b" + str(len(H) + 1), [n_y, 1], initializer=tf.zeros_initializer())
+            parameters["W" + str(len(H) + 1)] = tf.get_variable("W" + str(len(H) + 1),
+                                                                [n_y, H[len(H) - 1][0]],
+                                                                initializer=tf.contrib.layers.xavier_initializer(seed=1))
+            parameters["b" + str(len(H) + 1)] = tf.get_variable("b" + str(len(H) + 1),
+                                                                [n_y, 1],
+                                                                initializer=tf.zeros_initializer())
         return parameters
 
     def initActivations(self, H):

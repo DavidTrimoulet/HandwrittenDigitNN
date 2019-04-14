@@ -53,8 +53,13 @@ def hand_written_digit():
     # Train 0.99481666 test 0.9676 my_network.model(training_set, training_label, test_set, test_label, gradient="adam", starter_learning_rate=0.01, num_epochs=500, H=[(370, "relu"), (150, "relu"), (50, "relu"), (25, "relu"), (12, "relu")])
     # Train 0.995633 test 0.9663 my_network.model(training_set, training_label, test_set, test_label, gradient="adam", starter_learning_rate=0.01, dropout_rate=0.2,num_epochs=500, H=[(150, "relu"), (50, "relu"), (50, "relu"), (50, "relu")])
     # Train 0.9988 test 0.9752
-    parameters, activations = my_network.model(training_set, training_label, test_set, test_label_array,
-                                               gradient="adam", starter_learning_rate=0.01, num_epochs=500,
+    parameters, activations = my_network.model(training_set,
+                                               training_label,
+                                               test_set,
+                                               test_label_array,
+                                               gradient="adam",
+                                               starter_learning_rate=0.01,
+                                               num_epochs=500,
                                                H=[(150, "relu"), (150, "relu"), (50, "relu")])
     return my_network, test_set, test_label, parameters, activations, width
 
