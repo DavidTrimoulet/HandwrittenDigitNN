@@ -1,5 +1,9 @@
 from tools import Tools
+from pathlib import Path
 from NN import NeuralNetwork as NN
+
+ROOT_PATH = Path('.')
+
 
 def hand_written_digit():
     test = False
@@ -57,7 +61,7 @@ def hand_written_digit():
 def hand_shown_digit():
     test = True
 
-    m, width, height, training_set, training_label = Tools.load_hand_shown_image("Data/Sign-Language-image/Dataset", test)
+    m, width, height, training_set, training_label = Tools.load_hand_shown_image(ROOT_PATH / "Data" / "Sign-Language-image/Dataset", test)
 
     return my_network, test_set, test_label, parameters, activations, width
 

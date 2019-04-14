@@ -1,7 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from PIL import Image
-from pathlib import Path
 
 
 def load_hand_written_label(path, test=False):
@@ -57,7 +56,7 @@ def load_hand_shown_image(path, test):
     m = 0
     width = 0
     height = 0
-    folders = Path(path)
+    folders = path
     for folder in folders.iterdir() :
 #       folder ="9"
         print("folder:", folder.name)
@@ -77,7 +76,7 @@ def load_hand_shown_image(path, test):
 
 
 def get_image(filename):
-    image = Image.open(filename)
+    image = Image.open(filename.absolute())
     width, height = image.size
     # if width != 100 :
     #    print("file:", file, width, height)
