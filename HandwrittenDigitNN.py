@@ -1,5 +1,9 @@
 from tools import Tools
+from pathlib import Path
 from NN import NeuralNetwork as NN
+
+ROOT_PATH = Path('.')
+
 
 def hand_written_digit():
     test = False
@@ -49,31 +53,36 @@ def hand_written_digit():
     # Train 0.99481666 test 0.9676 my_network.model(training_set, training_label, test_set, test_label, gradient="adam", starter_learning_rate=0.01, num_epochs=500, H=[(370, "relu"), (150, "relu"), (50, "relu"), (25, "relu"), (12, "relu")])
     # Train 0.995633 test 0.9663 my_network.model(training_set, training_label, test_set, test_label, gradient="adam", starter_learning_rate=0.01, dropout_rate=0.2,num_epochs=500, H=[(150, "relu"), (50, "relu"), (50, "relu"), (50, "relu")])
     # Train 0.9988 test 0.9752
-    parameters, activations = my_network.model(training_set, training_label, test_set, test_label_array,
-                     gradient="adam", starter_learning_rate=0.01, num_epochs=500,
-                     H=[(150, "relu"), (150, "relu"), (50, "relu")])
+    parameters, activations = my_network.model(training_set,
+                                               training_label,
+                                               test_set,
+                                               test_label_array,
+                                               gradient="adam",
+                                               starter_learning_rate=0.01,
+                                               num_epochs=500,
+                                               H=[(150, "relu"), (150, "relu"), (50, "relu")])
     return my_network, test_set, test_label, parameters, activations, width
+
 
 def hand_shown_digit():
     test = True
 
-    m, width, height, training_set, training_label = Tools.load_hand_shown_image("Data/Sign-Language-image/Dataset", test)
+    m, width, height, training_set, training_label = Tools.load_hand_shown_image(ROOT_PATH / "Data" / "Sign-Language-image/Dataset", test)
 
     return my_network, test_set, test_label, parameters, activations, width
 
 if __name__ == '__main__':
 
-    my_network, test_set, test_label , parameters, activations, width = hand_written_digit()
+    my_network, test_set, test_label, parameters, activations, width = hand_written_digit()
 
-    while True :
-        print("get a picture number between 0 and ", test_set.shape[1], ":" )
+    while True:
+        print("get a picture number between 0 and ", test_set.shape[1], ":")
         try:
             image_number = int(input('Image:'))
         except ValueError:
             print ("Not a number")
         print(test_set)
-        Tools.displayImage( test_set[:, image_number] , width )
-        predicted_number = my_network.predict( parameters, activations ,  test_set[ :, image_number ].reshape(784,1) )
+        Tools.displayImage(test_set[:, image_number], width)
+        predicted_number = my_network.predict(parameters, activations, test_set[:, image_number].reshape(784, 1))
         print(test_label)
-        print("it's a ", predicted_number, "should be a " , test_label[0][image_number] )
-
+        print("it's a ", predicted_number, "should be a ", test_label[0][image_number])
