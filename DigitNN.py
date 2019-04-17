@@ -75,7 +75,7 @@ def hand_written_digit():
 
 
 def hand_shown_digit():
-    test = False
+    test = True
     datasetPath = ROOT_PATH / "Data" / "Sign-Language-image" / "Dataset"
     m, width, height, training_set, training_label = Tools.load_hand_shown_image(datasetPath, test)
     index = ((m // 4) * 3)
