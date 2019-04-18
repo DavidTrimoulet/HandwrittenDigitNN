@@ -76,12 +76,12 @@ def hand_written_digit():
 
 def hand_shown_digit():
     test = False
-    datasetPath = ROOT_PATH / "Data" / "Sign-Language-image" / "Dataset"
-    m, width, height, training_set, training_label = Tools.load_hand_shown_image(datasetPath, test)
+    dataset_path = ROOT_PATH / "Data" / "Sign-Language-image" / "Dataset"
+    m, width, height, training_set, training_label = Tools.load_hand_shown_image(dataset_path, test)
     index = ((m // 4) * 3)
-    print(int(index))
-    print(training_label.shape)
-    print(training_set.shape)
+    #print(int(index))
+    #print(training_label.shape)
+    #print(training_set.shape)
     test_set = training_set[index:, :, :, :]
     test_label = training_label[index:, :]
     training_set = training_set[:index, :, :, :]
@@ -90,7 +90,7 @@ def hand_shown_digit():
     print(training_label[55])
     my_network = NN_K.NnKeras()
     # my_network.nn_model(training_set, training_label, test_set, test_label)
-    my_network.convolutional_VGG(training_set, training_label, test_set, test_label)
+    my_network.convolution_vgg(training_set, training_label, test_set, test_label)
 
     while True:
         print("get a picture number between 0 and ", test_set.shape[1], ":")
@@ -98,11 +98,11 @@ def hand_shown_digit():
             image_number = int(input('Image:'))
         except ValueError:
             print ("Not a number")
-        print(test_set)
         Tools.display_image(test_set[image_number, :, :, :], width, mode="RGB")
         predicted_number = my_network.predict_one(test_set[image_number, :, :, :])
 
         print("it's a ", predicted_number, "should be a ", test_label[image_number])
+
 
 if __name__ == '__main__':
     #hand_written_digit()
