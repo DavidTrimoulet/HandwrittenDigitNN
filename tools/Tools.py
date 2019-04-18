@@ -62,43 +62,37 @@ def load_hand_shown_image(path, test):
         print("folder:", folder.name)
         for file in folder.iterdir():
             training_label.append(int(folder.name))
-            height, width, image_vectorized = get_image(file)
-            training_set = training_set + image_vectorized
+            height, width, image = get_image(file)
+            training_set.append(image)
             m += 1
         # print(m)
         if test:
             break
-    training_set = np.asarray(training_set).reshape((m, width * height * 3)).T
-    training_label = np.asarray(training_label).reshape(1, m)
+    training_set = np.asarray(training_set)
+    training_label = np.asarray(training_label).reshape(len(training_label), 1)
     print(training_set.shape)
+    print(training_label.shape)
+    training_set, training_label = shuffle_data_set(training_set, training_label)
 
     return m, width, height, training_set, training_label
 
 
 def get_image(filename):
-    image = Image.open(filename.absolute())
-    width, height = image.size
-    # if width != 100 :
-    #    print("file:", file, width, height)
-    pixels = image.load()
-    r = []
-    g = []
-    b = []
-    for i in range(0, width):
-        for j in range(0, height):
-            pixel = pixels[i, j]
-            r.append(pixel[0])
-            g.append(pixel[1])
-            b.append(pixel[2])
-    image_vectorized = r + g + b
-    return height, width, image_vectorized
+    image_loaded = Image.open(filename.absolute())
+    width, height = image_loaded.size
+    image = np.asarray(image_loaded)
+    return height, width, image
 
+def shuffle_data_set(X, Y) :
+    rng_state = np.random.get_state()
+    np.random.shuffle(X)
+    np.random.set_state(rng_state)
+    np.random.shuffle(Y)
+    return X, Y
 
-def convert_from_vector_to_array(training_vector, vectorOutputNumber):
+def one_hot_matrix(training_vector, vectorOutputNumber):
     data = np.zeros( (vectorOutputNumber, training_vector.shape[1]))
     for i in range(0, training_vector.shape[1]):
-        # print(data[training_vector[0][i]])
-        # print([i])
         data[training_vector[0][i]][i] = 1
 
     return data
@@ -112,7 +106,7 @@ def display_n_images(data, n, image_size, mode="grey"):
 
 def display_image(image_raw, image_size, mode="grey"):
     if mode == "RGB":
-        image = image_raw.reshape(image_size, image_size, 3)
+        image = image_raw
     else:
         image = image_raw.reshape((image_size, image_size))
     plt.imshow(image)

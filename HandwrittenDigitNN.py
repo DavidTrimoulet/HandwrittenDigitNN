@@ -12,11 +12,11 @@ def hand_written_digit():
     training_label = Tools.load_hand_written_label("Data/train-labels.idx1-ubyte", test)
     training_set = training_set / 255
     print(training_label)
-    training_label = Tools.convert_from_vector_to_array(training_label, 10)
+    training_label = Tools.one_hot_matrix(training_label, 10)
     m_test, width_test, height_test, test_set = Tools.load_hand_written_image("Data/t10k-images.idx3-ubyte", test)
     test_set = test_set / 255
     test_label = Tools.load_hand_written_label("Data/t10k-labels.idx1-ubyte", test)
-    test_label_array = Tools.convert_from_vector_to_array(test_label, 10)
+    test_label_array = Tools.one_hot_matrix(test_label, 10)
 
     # print(test_label.shape)
     Tools.display_n_images(training_set, 10, width)

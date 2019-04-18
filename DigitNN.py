@@ -14,13 +14,13 @@ def hand_written_digit():
     training_label = Tools.load_hand_written_label(datasetLabelPath, test)
     training_set = training_set / 255
     print(training_label)
-    training_label_one_hot = Tools.convert_from_vector_to_array(training_label, 10)
+    training_label_one_hot = Tools.one_hot_matrix(training_label, 10)
     testsetPath = ROOT_PATH / "Data" / "t10k-images.idx3-ubyte"
     m_test, width_test, height_test, test_set = Tools.load_hand_written_image(testsetPath, test)
     test_set = test_set / 255
     testsetLabelPath = ROOT_PATH / "Data" / "t10k-labels.idx1-ubyte"
     test_label = Tools.load_hand_written_label(testsetLabelPath, test)
-    test_label_one_hot = Tools.convert_from_vector_to_array(test_label, 10)
+    test_label_one_hot = Tools.one_hot_matrix(test_label, 10)
     channel = 1
     # print(test_label.shape)
     Tools.display_n_images(training_set, 10, width)
@@ -75,27 +75,34 @@ def hand_written_digit():
 
 
 def hand_shown_digit():
-    test = True
+    test = False
     datasetPath = ROOT_PATH / "Data" / "Sign-Language-image" / "Dataset"
     m, width, height, training_set, training_label = Tools.load_hand_shown_image(datasetPath, test)
     index = ((m // 4) * 3)
     print(int(index))
     print(training_label.shape)
     print(training_set.shape)
-    test_set = training_set[:, index:]
-    test_label = training_label[:, index:]
-    training_set = training_set[:, :index]
-    training_label = training_label[:, :index]
-    training_label_array = Tools.convert_from_vector_to_array(training_label, 10)
-    test_label_array = Tools.convert_from_vector_to_array(test_label, 10)
-    Tools.display_n_images(training_set, 10, width, mode="RGB")
-    channel = 3
+    test_set = training_set[index:, :, :, :]
+    test_label = training_label[index:, :]
+    training_set = training_set[:index, :, :, :]
+    training_label = training_label[:index, :]
+    Tools.display_image(training_set[55, :, :, :], 100, mode="RGB")
+    print(training_label[55])
     my_network = NN_K.NnKeras()
-    my_network.nn_model(training_set,
-                        training_label_array,
-                        test_set,
-                        test_label_array)
+    # my_network.nn_model(training_set, training_label, test_set, test_label)
+    my_network.convolutional_VGG(training_set, training_label, test_set, test_label)
 
+    while True:
+        print("get a picture number between 0 and ", test_set.shape[1], ":")
+        try:
+            image_number = int(input('Image:'))
+        except ValueError:
+            print ("Not a number")
+        print(test_set)
+        Tools.display_image(test_set[image_number, :, :, :], width, mode="RGB")
+        predicted_number = my_network.predict_one(test_set[image_number, :, :, :])
+
+        print("it's a ", predicted_number, "should be a ", test_label[image_number])
 
 if __name__ == '__main__':
     #hand_written_digit()
