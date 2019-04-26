@@ -56,8 +56,7 @@ def load_hand_shown_image(path, test):
     m = 0
     width = 0
     height = 0
-    folders = path
-    for folder in folders.iterdir():
+    for folder in path.iterdir():
         # folder ="9"
         print("folder:", folder.name)
         for file in folder.iterdir():
@@ -70,10 +69,7 @@ def load_hand_shown_image(path, test):
             break
     training_set = np.asarray(training_set)
     training_label = np.asarray(training_label).reshape(len(training_label), 1)
-    print(training_set.shape)
-    print(training_label.shape)
     training_set, training_label = shuffle_data_set(training_set, training_label)
-
     return m, width, height, training_set, training_label
 
 
@@ -83,12 +79,14 @@ def get_image(filename):
     image = np.asarray(image_loaded)
     return height, width, image
 
-def shuffle_data_set(X, Y) :
+
+def shuffle_data_set(X, Y):
     rng_state = np.random.get_state()
     np.random.shuffle(X)
     np.random.set_state(rng_state)
     np.random.shuffle(Y)
     return X, Y
+
 
 def one_hot_matrix(training_vector, vectorOutputNumber):
     data = np.zeros( (vectorOutputNumber, training_vector.shape[1]))

@@ -31,8 +31,7 @@ class NnKeras():
         self.score = self.model.evaluate(X_test, Y_test, batch_size=128)
         print("score:",  self.score)
 
-
-    def convolutional_VGG(self, X_train, Y_train, X_test, Y_test ):
+    def convolution_vgg(self, X_train, Y_train, X_test, Y_test):
         print(Y_train[0])
         Y_train = to_categorical(Y_train, num_classes=10)
         Y_test = to_categorical(Y_test, num_classes=10)
@@ -51,26 +50,30 @@ class NnKeras():
         self.model.add(Conv2D(128, (3, 3), activation='relu'))
         self.model.add(Conv2D(128, (3, 3), activation='relu'))
         self.model.add(MaxPooling2D(pool_size=(2, 2)))
-        # self.model.add(Dropout(0.25))
+        #self.model.add(Dropout(0.25))
 
-        self.model.add(Conv2D(256, (3, 3), activation='relu'))
-        self.model.add(Conv2D(256, (3, 3), activation='relu'))
-        self.model.add(MaxPooling2D(pool_size=(2, 2)))
-        # self.model.add(Dropout(0.25))
+        self.model.add(Conv2D(256, (3, 3), activation='relu', padding='same'))
+        self.model.add(Conv2D(256, (3, 3), activation='relu', padding='same'))
+        self.model.add(MaxPooling2D(pool_size=(2, 2), padding="same"))
+
+        self.model.add(Conv2D(512, (3, 3), activation='relu', padding='same'))
+        self.model.add(Conv2D(512, (3, 3), activation='relu', padding='same'))
+        self.model.add(MaxPooling2D(pool_size=(2, 2), padding="same"))
 
         self.model.add(Flatten())
-        self.model.add(Dense(256, activation='relu'))
-        self.model.add(Dense(128, activation='relu'))
-        #self.model.add(Dropout(0.5))
+        self.model.add(Dense(4096, activation='relu'))
+        self.model.add(Dense(2048, activation='relu'))
+
         self.model.add(Dense(10, activation='softmax'))
-        adam = Adam(lr=0.00001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
+        adam = Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
         self.model.compile(loss='categorical_crossentropy', optimizer=adam)
 
         self.model.fit(X_train, Y_train, batch_size=32, epochs=10)
+        score = self.model.evaluate(X_train, Y_train, batch_size=32)
+        print("Train accuracy:", score)
         score = self.model.evaluate(X_test, Y_test, batch_size=32)
-        print(score)
+        print("Test accuracy:", score)
 
     def predict_one(self, X):
         X = X.reshape(1, X.shape[0], X.shape[1], X.shape[2])
-        print(X.shape)
         return self.model.predict_classes(X)
