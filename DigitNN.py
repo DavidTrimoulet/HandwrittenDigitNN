@@ -97,7 +97,6 @@ def hand_shown_digit():
         my_network.model.save(str(save_path))
 
     while True:
-
         et, frame = cap.read()
         img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         img = cv2.resize(img, (100, 100))
@@ -111,6 +110,7 @@ def hand_shown_digit():
 
     cap.release()
     cv2.destroyAllWindows()
+
 
 
 if __name__ == '__main__':
