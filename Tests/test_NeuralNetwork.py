@@ -43,12 +43,10 @@ class TestNeuralNetworkTemplate(TestCase):
         print(cost)
 
     def test_load_hand_shown_image(self):
-        imagePath = ROOT_PATH / "Data" / "Sign-Language-image" / "Dataset" / "0" / "IMG_1118.JPG"
+        imagePath = ROOT_PATH / ".." / "Data" / "Sign-Language-image" / "Dataset" / "0" / "IMG_1118.JPG"
         width, height, image_vectorized = Tools.get_image(imagePath)
-        self.assertEqual(len(image_vectorized), 30000)
-        self.assertEqual(height, 100)
-        self.assertEqual(width, 100)
+        self.assertEqual(image_vectorized.shape , (100,100,3))
 
     def test_load_hand_shown_images(self):
-        imageFolderPath = ROOT_PATH / "Data" / "Sign-Language-image" / "Dataset"
-        m, width, height, training_set, training_label = Tools.load_hand_shown_image(imageFolderPath, True)
+        imageFolderPath = ROOT_PATH / ".." / "Data" / "Sign-Language-image" / "Dataset"
+        Tools.load_hand_shown_image(imageFolderPath, True)
